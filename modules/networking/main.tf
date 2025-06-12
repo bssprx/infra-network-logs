@@ -96,8 +96,8 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "tgw_attachment" {
   subnet_ids                = [for s in aws_subnet.private : s.id if s.availability_zone == "us-east-1a" || s.availability_zone == "us-east-1c"]
   transit_gateway_id        = var.transit_gateway_id
   vpc_id                    = aws_vpc.main.id
-  transit_gateway_default_route_table_association = false
-  transit_gateway_default_route_table_propagation = false
+  transit_gateway_default_route_table_association = true
+  transit_gateway_default_route_table_propagation = true
 
   # timeouts block is not supported for this resource in Terraform
   # timeouts {
@@ -114,17 +114,7 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "tgw_attachment" {
   })
 }
 
-resource "aws_ec2_transit_gateway_route_table_association" "tgw_route_table_assoc" {
-  count                         = var.transit_gateway_id != null && var.transit_gateway_route_table_id != null ? 1 : 0
-  transit_gateway_attachment_id = aws_ec2_transit_gateway_vpc_attachment.tgw_attachment[0].id
-  transit_gateway_route_table_id = var.transit_gateway_route_table_id
-}
 
-resource "aws_ec2_transit_gateway_route_table_propagation" "tgw_route_table_prop" {
-  count                         = var.transit_gateway_id != null && var.transit_gateway_route_table_id != null ? 1 : 0
-  transit_gateway_attachment_id = aws_ec2_transit_gateway_vpc_attachment.tgw_attachment[0].id
-  transit_gateway_route_table_id = var.transit_gateway_route_table_id
-}
 
 
 

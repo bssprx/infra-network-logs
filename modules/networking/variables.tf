@@ -69,12 +69,6 @@ variable "project" {
   description = "Project name for tagging purposes"
   type        = string
 }
-# Manual TGW Route Table Association and Propagation
-variable "transit_gateway_route_table_id" {
-  description = "ID of the TGW route table to associate and propagate with"
-  type        = string
-  default     = null
-}
 
 variable "enable_cloudwatch_alarms" {
   description = "Flag to enable creation of CloudWatch alarms for TGW attachment failures"

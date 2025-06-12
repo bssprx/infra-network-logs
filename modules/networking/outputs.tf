@@ -39,15 +39,6 @@ output "tgw_attachment_state" {
   value       = try(one(aws_ec2_transit_gateway_vpc_attachment.tgw_attachment[*].state), null)
 }
 
-output "tgw_attachment_failure_log_group_name" {
-  description = "Name of the CloudWatch Log Group for failed Transit Gateway VPC attachments."
-  value       = try(aws_cloudwatch_log_group.tgw_attachment_failures[0].name, null)
-}
-
-output "tgw_attachment_failure_log_group_arn" {
-  description = "ARN of the CloudWatch Log Group for failed Transit Gateway VPC attachments."
-  value       = try(aws_cloudwatch_log_group.tgw_attachment_failures[0].arn, null)
-}
 
 output "tgw_attachment_id" {
   description = "The ID of the Transit Gateway VPC attachment."
