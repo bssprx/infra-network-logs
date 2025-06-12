@@ -86,31 +86,6 @@ resource "aws_route_table_association" "public" {
   route_table_id = aws_route_table.public.id
 }
 
-resource "aws_route_table" "private" {
-  count  = length(var.private_subnet_cidrs) > 0 && var.transit_gateway_id != null ? 1 : 0
-  vpc_id = aws_vpc.main.id
-
-  tags = merge(var.tags, {
-    Name        = "${var.name_prefix}-private-rt",
-    Environment = var.environment,
-    Project     = var.project
-  })
-}
-
-resource "aws_route_table_association" "private" {
-  count          = length(var.private_subnet_cidrs)
-  subnet_id      = aws_subnet.private[count.index].id
-  route_table_id = aws_route_table.private[0].id
-}
-
-resource "aws_route" "transit_gateway_routes" {
-  count = var.transit_gateway_id != null && var.create_tgw_routes ? length(var.transit_gateway_routes) : 0
-
-  route_table_id         = aws_route_table.private[0].id
-  destination_cidr_block = var.transit_gateway_routes[count.index]
-  transit_gateway_id     = var.transit_gateway_id
-}
-
 # Private route tables for NAT routing
 resource "aws_route_table" "private_nat" {
   count  = length(var.private_subnet_cidrs)
@@ -148,10 +123,6 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "tgw_attachment" {
   # timeouts {
   #   create = "20m"
   # }
-
-  depends_on = [
-    aws_route_table_association.private
-  ]
 
   tags = merge(var.tags, {
     Name              = "${var.name_prefix}-tgw-attachment",
