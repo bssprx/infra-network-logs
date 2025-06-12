@@ -36,6 +36,27 @@ resource "aws_subnet" "private" {
   })
 }
 
+# Elastic IPs for NAT Gateways
+resource "aws_eip" "nat" {
+  count      = length(var.availability_zones)
+  vpc        = true
+
+  tags = merge(var.tags, {
+    Name = "${var.name_prefix}-nat-eip-${element(var.availability_zones, count.index)}"
+  })
+}
+
+# NAT Gateways
+resource "aws_nat_gateway" "nat" {
+  count         = length(var.availability_zones)
+  allocation_id = aws_eip.nat[count.index].id
+  subnet_id     = aws_subnet.public[count.index].id
+
+  tags = merge(var.tags, {
+    Name = "${var.name_prefix}-nat-gw-${element(var.availability_zones, count.index)}"
+  })
+}
+
 ## Internet Gateway
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main.id
@@ -88,6 +109,30 @@ resource "aws_route" "transit_gateway_routes" {
   route_table_id         = aws_route_table.private[0].id
   destination_cidr_block = var.transit_gateway_routes[count.index]
   transit_gateway_id     = var.transit_gateway_id
+}
+
+# Private route tables for NAT routing
+resource "aws_route_table" "private_nat" {
+  count  = length(var.private_subnet_cidrs)
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat[count.index % length(var.availability_zones)].id
+  }
+
+  tags = merge(var.tags, {
+    Name        = "${var.name_prefix}-private-nat-rt-${count.index}",
+    Environment = var.environment,
+    Project     = var.project
+  })
+}
+
+# Associate private subnets with NAT route tables
+resource "aws_route_table_association" "private_nat" {
+  count          = length(var.private_subnet_cidrs)
+  subnet_id      = aws_subnet.private[count.index].id
+  route_table_id = aws_route_table.private_nat[count.index].id
 }
 
 ## Transit Gateway Attachment

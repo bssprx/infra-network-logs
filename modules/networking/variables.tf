@@ -96,3 +96,16 @@ variable "alarm_topic_arns" {
   type        = list(string)
   default     = []
 }
+
+# NAT Gateway Configuration
+variable "enable_nat_gateway" {
+  description = "Whether to create NAT Gateways for private subnet internet access"
+  type        = bool
+  default     = true
+}
+
+variable "nat_eip_tags" {
+  description = "Tags to apply to NAT Gateway Elastic IPs"
+  type        = map(string)
+  default     = {}
+}
