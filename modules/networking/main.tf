@@ -141,26 +141,10 @@ resource "aws_security_group" "logging_sg" {
   vpc_id      = aws_vpc.main.id
 
   ingress {
-    from_port   = 514
-    to_port     = 514
-    protocol    = "udp"
-    cidr_blocks = ["0.0.0.0/0"]
-    description = "Syslog UDP"
-  }
-
-  ingress {
-    from_port   = 514
-    to_port     = 514
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-    description = "Syslog TCP"
-  }
-
-  ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.ssh_ingress_cidrs
     description = "SSH"
   }
 
@@ -168,8 +152,24 @@ resource "aws_security_group" "logging_sg" {
     from_port   = 3000
     to_port     = 3000
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.grafana_ingress_cidrs
     description = "Grafana"
+  }
+
+  ingress {
+    from_port   = 514
+    to_port     = 514
+    protocol    = "tcp"
+    cidr_blocks = var.syslog_ingress_cidrs
+    description = "Syslog TCP"
+  }
+
+  ingress {
+    from_port   = 514
+    to_port     = 514
+    protocol    = "udp"
+    cidr_blocks = var.syslog_ingress_cidrs
+    description = "Syslog UDP"
   }
 
   egress {

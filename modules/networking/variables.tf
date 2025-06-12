@@ -61,3 +61,32 @@ variable "nat_eip_tags" {
   type        = map(string)
   default     = {}
 }
+variable "allowed_ssh_cidrs" {
+  description = "List of CIDR blocks allowed to access SSH (port 22)"
+  type        = list(string)
+  default     = ["10.0.0.0/8"]
+  validation {
+    condition     = alltrue([for cidr in var.allowed_ssh_cidrs : can(regex("^([0-9]{1,3}\\.){3}[0-9]{1,3}\\/(\\d|[12]\\d|3[0-2])$", cidr))])
+    error_message = "Each entry in allowed_ssh_cidrs must be a valid IPv4 CIDR block."
+  }
+}
+
+variable "allowed_grafana_cidrs" {
+  description = "List of CIDR blocks allowed to access Grafana (port 3000)"
+  type        = list(string)
+  default     = []
+  validation {
+    condition     = alltrue([for cidr in var.allowed_grafana_cidrs : can(regex("^([0-9]{1,3}\\.){3}[0-9]{1,3}\\/(\\d|[12]\\d|3[0-2])$", cidr))])
+    error_message = "Each entry in allowed_grafana_cidrs must be a valid IPv4 CIDR block."
+  }
+}
+
+variable "allowed_syslog_cidrs" {
+  description = "List of CIDR blocks allowed to send Syslog (port 514 TCP/UDP)"
+  type        = list(string)
+  default     = []
+  validation {
+    condition     = alltrue([for cidr in var.allowed_syslog_cidrs : can(regex("^([0-9]{1,3}\\.){3}[0-9]{1,3}\\/(\\d|[12]\\d|3[0-2])$", cidr))])
+    error_message = "Each entry in allowed_syslog_cidrs must be a valid IPv4 CIDR block."
+  }
+}
