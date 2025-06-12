@@ -31,7 +31,7 @@ module "networking" {
     "172.20.1.0/24",
     "172.30.1.0/24"
   ]
-  transit_gateway_route_table_id = "tgw-rtb-0abcd1234ef567890"
+  transit_gateway_route_table_id = "tgw-rtb-0942727d2bbc6fed8"
 }
 
 output "vpc_id" {
