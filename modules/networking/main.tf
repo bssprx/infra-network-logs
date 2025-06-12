@@ -140,36 +140,48 @@ resource "aws_security_group" "logging_sg" {
   description = "Allow logging-related inbound traffic"
   vpc_id      = aws_vpc.main.id
 
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = var.ssh_ingress_cidrs
-    description = "SSH"
+  dynamic "ingress" {
+    for_each = var.ssh_ingress_cidrs
+    content {
+      from_port   = 22
+      to_port     = 22
+      protocol    = "tcp"
+      cidr_blocks = [ingress.value]
+      description = "SSH"
+    }
   }
 
-  ingress {
-    from_port   = 3000
-    to_port     = 3000
-    protocol    = "tcp"
-    cidr_blocks = var.grafana_ingress_cidrs
-    description = "Grafana"
+  dynamic "ingress" {
+    for_each = var.grafana_ingress_cidrs
+    content {
+      from_port   = 3000
+      to_port     = 3000
+      protocol    = "tcp"
+      cidr_blocks = [ingress.value]
+      description = "Grafana"
+    }
   }
 
-  ingress {
-    from_port   = 514
-    to_port     = 514
-    protocol    = "tcp"
-    cidr_blocks = var.syslog_ingress_cidrs
-    description = "Syslog TCP"
+  dynamic "ingress" {
+    for_each = var.syslog_ingress_cidrs
+    content {
+      from_port   = 514
+      to_port     = 514
+      protocol    = "tcp"
+      cidr_blocks = [ingress.value]
+      description = "Syslog TCP"
+    }
   }
 
-  ingress {
-    from_port   = 514
-    to_port     = 514
-    protocol    = "udp"
-    cidr_blocks = var.syslog_ingress_cidrs
-    description = "Syslog UDP"
+  dynamic "ingress" {
+    for_each = var.syslog_ingress_cidrs
+    content {
+      from_port   = 514
+      to_port     = 514
+      protocol    = "udp"
+      cidr_blocks = [ingress.value]
+      description = "Syslog UDP"
+    }
   }
 
   egress {
