@@ -54,13 +54,3 @@ output "tgw_attachment_id" {
 # -------------------------------
 # NAT Gateway and Elastic IP Outputs
 # -------------------------------
-
-output "nat_gateway_ids" {
-  description = "List of NAT Gateway IDs."
-  value       = aws_nat_gateway.this[*].id
-}
-
-output "nat_eip_ids" {
-  description = "List of Elastic IP IDs associated with the NAT Gateways."
-  value       = aws_eip.nat[*].id
-}

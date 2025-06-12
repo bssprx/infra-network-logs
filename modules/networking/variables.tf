@@ -90,3 +90,46 @@ variable "allowed_syslog_cidrs" {
     error_message = "Each entry in allowed_syslog_cidrs must be a valid IPv4 CIDR block."
   }
 }
+
+# Logging Node and Monitoring Variables
+variable "enable_cloudwatch_alarms" {
+  description = "Flag to enable CloudWatch alarms and monitoring resources"
+  type        = bool
+  default     = false
+}
+
+variable "ssh_ingress_cidrs" {
+  description = "CIDR blocks allowed to access SSH (port 22) on the logging node"
+  type        = list(string)
+  default     = []
+  validation {
+    condition     = alltrue([for cidr in var.ssh_ingress_cidrs : can(regex("^([0-9]{1,3}\\.){3}[0-9]{1,3}\\/(\\d|[12]\\d|3[0-2])$", cidr))])
+    error_message = "Each entry in ssh_ingress_cidrs must be a valid IPv4 CIDR block."
+  }
+}
+
+variable "grafana_ingress_cidrs" {
+  description = "CIDR blocks allowed to access Grafana (port 3000) on the logging node"
+  type        = list(string)
+  default     = []
+  validation {
+    condition     = alltrue([for cidr in var.grafana_ingress_cidrs : can(regex("^([0-9]{1,3}\\.){3}[0-9]{1,3}\\/(\\d|[12]\\d|3[0-2])$", cidr))])
+    error_message = "Each entry in grafana_ingress_cidrs must be a valid IPv4 CIDR block."
+  }
+}
+
+variable "syslog_ingress_cidrs" {
+  description = "CIDR blocks allowed to send Syslog traffic to the logging node (port 514 TCP/UDP)"
+  type        = list(string)
+  default     = []
+  validation {
+    condition     = alltrue([for cidr in var.syslog_ingress_cidrs : can(regex("^([0-9]{1,3}\\.){3}[0-9]{1,3}\\/(\\d|[12]\\d|3[0-2])$", cidr))])
+    error_message = "Each entry in syslog_ingress_cidrs must be a valid IPv4 CIDR block."
+  }
+}
+
+variable "alarm_topic_arns" {
+  description = "List of SNS topic ARNs to notify when CloudWatch alarms are triggered"
+  type        = list(string)
+  default     = []
+}

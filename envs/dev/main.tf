@@ -23,14 +23,6 @@ module "networking" {
 
   # Transit gateway ID for routing
   transit_gateway_id     = "tgw-0f08b9a1e117882f2"
-  # Routes to add to the transit gateway
-  transit_gateway_routes = [
-    "10.201.4.0/22",
-    "10.201.12.0/22",
-    "10.209.99.0/26",
-    "172.20.1.0/24",
-    "172.30.1.0/24"
-  ]
 }
 
 output "vpc_id" {
