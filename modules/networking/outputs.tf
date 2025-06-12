@@ -49,3 +49,18 @@ output "tgw_attachment_id" {
 #   description = "ARN of the CloudWatch metric alarm that monitors failed TGW VPC attachments."
 #   value       = aws_cloudwatch_metric_alarm.tgw_attachment_failure_alarm.arn
 # }
+
+
+# -------------------------------
+# NAT Gateway and Elastic IP Outputs
+# -------------------------------
+
+output "nat_gateway_ids" {
+  description = "List of NAT Gateway IDs."
+  value       = aws_nat_gateway.this[*].id
+}
+
+output "nat_eip_ids" {
+  description = "List of Elastic IP IDs associated with the NAT Gateways."
+  value       = aws_eip.nat[*].id
+}
